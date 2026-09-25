@@ -81,6 +81,15 @@
     "original": "YWRkb24gdXNlciB7CiAgaW5wdXQgewogICAgaW50IHVzZXJfaWQ/IHsKICAgICAgdGFibGUgPSAidXNlciIKICAgIH0KICB9CgogIHN0YWNrIHsKICAgIGRiLnF1ZXJ5IHVzZXIgewogICAgICB3aGVyZSA9ICRkYi51c2VyLmlkID09ICRpbnB1dC51c2VyX2lkCiAgICAgIHJldHVybiA9IHt0eXBlOiAic2luZ2xlIn0KICAgIH0KICB9Cn0="
   },
   {
+    "id": 899010,
+    "path": "tables/subjects.xs",
+    "status": "unchanged",
+    "type": "table",
+    "staged": false,
+    "sha256": "6fc9e2d2062c840790d58520b73c8e924fdf23bd36c05b92ac73ee3efcd53600",
+    "original": "Ly8gU3RvcmVzIGFjYWRlbWljIHN1YmplY3RzLCBhc3NpZ25lZCB0ZWFjaGVyLCB3b3JrbG9hZCBob3VycywgYW5kIHVzZXIgYXNzb2NpYXRpb24KdGFibGUgc3ViamVjdHMgewogIGF1dGggPSBmYWxzZQoKICBzY2hlbWEgewogICAgaW50IGlkCiAgICB0aW1lc3RhbXAgY3JlYXRlZF9hdD89bm93CiAgICB0ZXh0IG5hbWUgZmlsdGVycz10cmltCiAgICB0ZXh0IHRlYWNoZXIgZmlsdGVycz10cmltCiAgICBpbnQgaG91cnMKICAKICAgIC8vIFJlZmVyZW5jZSB0byB0aGUgYXV0aGVudGljYXRlZCB1c2VyIGZyb20gdGhlIFhhbm8gdXNlciB0YWJsZS4KICAgIGludCB1c2VyX2lkPyB7CiAgICAgIHRhYmxlID0gInVzZXIiCiAgICB9CiAgfQoKICBpbmRleCA9IFsKICAgIHt0eXBlOiAicHJpbWFyeSIsIGZpZWxkOiBbe25hbWU6ICJpZCJ9XX0KICAgIHt0eXBlOiAiYnRyZWUiLCBmaWVsZDogW3tuYW1lOiAiY3JlYXRlZF9hdCIsIG9wOiAiZGVzYyJ9XX0KICAgIHt0eXBlOiAiYnRyZWUiLCBmaWVsZDogW3tuYW1lOiAidXNlcl9pZCIsIG9wOiAiYXNjIn1dfQogIF0KfQ=="
+  },
+  {
     "id": 4026088,
     "type": "api_endpoint",
     "path": "apis/authentication/4026088_auth_login_POST.xs",
