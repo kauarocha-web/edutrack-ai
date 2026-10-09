@@ -19,4 +19,5 @@ tool search_xano_docs {
 
   response = $search_xano_docs
   tags = ["xano:quick-start"]
+  guid = "y6qYMNMJmkTCpYagEyyWmtAaOMQ"
 }
