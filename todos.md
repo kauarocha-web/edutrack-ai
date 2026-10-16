@@ -11,3 +11,11 @@
 ## Especificações Arquivadas (`create-academic-tasks-table`)
 - [x] Definição do esquema da tabela `academic_tasks` em `table/academic_tasks.xs` (`id`, `created_at`, `title`, `description`, `due_date`, `status`, `subject_id` FK para `subjects`, `user_id` FK para `user`).
 - [x] Arquivamento no OpenSpec (`openspec/specs/academic-tasks/spec.md` promovido e mudança arquivada).
+
+## Planejamento em Aberto (`logica-calculo-progresso`)
+- [ ] Criar o script Python em `scripts/calculate_progress.py` com a função de cálculo de progresso por disciplina retornando JSON.
+
+## Especificações Arquivadas (`api-crud`)
+- [x] Implementação dos endpoints CRUD de `subjects` com filtro obrigatório por `user_id == $auth.id` em `api/subjects/`.
+- [x] Implementação dos endpoints CRUD de `academic_tasks` com filtro obrigatório por `user_id == $auth.id` em `api/academic_tasks/`.
+- [x] Arquivamento no OpenSpec (`openspec/specs/api-crud/spec.md` promovido e mudança arquivada).
