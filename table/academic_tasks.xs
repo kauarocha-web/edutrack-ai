@@ -28,4 +28,5 @@ table academic_tasks {
     {type: "btree", field: [{name: "subject_id", op: "asc"}]}
     {type: "btree", field: [{name: "user_id", op: "asc"}]}
   ]
+  guid = "y6rwDpm1Wj8DoZRm48xo3z0S974"
 }
