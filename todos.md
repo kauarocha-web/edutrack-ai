@@ -19,3 +19,11 @@
 - [x] Implementação dos endpoints CRUD de `subjects` com filtro obrigatório por `user_id == $auth.id` em `api/subjects/`.
 - [x] Implementação dos endpoints CRUD de `academic_tasks` com filtro obrigatório por `user_id == $auth.id` em `api/academic_tasks/`.
 - [x] Arquivamento no OpenSpec (`openspec/specs/api-crud/spec.md` promovido e mudança arquivada).
+
+## Especificações Arquivadas (`cadastro-login`)
+- [x] Configuração da variável `XANO_AUTH_BASE_URL` no arquivo `.env` na raiz do projeto.
+- [x] Implementação da página de Perfil com cadastro (`auth/signup`), login (`auth/login`), dados do perfil (`auth/me`) e logout em `pages/3_👤_Perfil.py`.
+- [x] Arquivamento no OpenSpec (`openspec/specs/cadastro-login/spec.md` promovido e mudança arquivada em `openspec/changes/archive/2026-10-23-cadastro-login`).
+
+
+
