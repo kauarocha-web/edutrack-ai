@@ -7,6 +7,7 @@ from services.api_service import (
     get_subjects
 )
 from scripts.calculate_progress import calculate_subject_progress
+from scripts.generate_report_pdf import generate_student_performance_pdf_bytes
 
 # ==============================================================================
 # Configuração da Página
@@ -26,8 +27,24 @@ st.caption("Acompanhe entregas, monitore o progresso das disciplinas e registre 
 token = st.session_state.get("auth_token")
 
 if not token:
-    st.warning("🔒 Você precisa estar logado para gerenciar suas tarefas acadêmicas.")
-    st.info("Por favor, acesse a página **👤 Perfil** no menu lateral para fazer login ou criar sua conta.")
+    st.warning("🔒 Você precisa estar logado para gerenciar suas tarefas acadêmicas integradas à API.")
+    st.info("Acesse a página **👤 Perfil** no menu lateral para fazer login ou criar sua conta.")
+
+    with st.container(border=True):
+        st.markdown("#### 📄 Demonstração: Relatório de Desempenho em PDF")
+        st.caption("Você pode testar a geração do relatório acadêmico em PDF agora mesmo em modo de demonstração:")
+        try:
+            demo_pdf_bytes = generate_student_performance_pdf_bytes()
+            st.download_button(
+                label="📥 Baixar Relatório de Demonstração (PDF)",
+                data=demo_pdf_bytes,
+                file_name="relatorio_desempenho_demo.pdf",
+                mime="application/pdf",
+                key="btn_demo_download_pdf",
+                use_container_width=True
+            )
+        except Exception as e:
+            st.error(f"Erro ao gerar PDF: {e}")
     st.stop()
 
 # ==============================================================================
@@ -57,6 +74,32 @@ else:
 # Mapeamento de id para nome da disciplina
 subject_map = {s["id"]: s.get("name", f"Disciplina #{s['id']}") for s in subjects_list if "id" in s}
 
+# Adiciona botão de download do relatório PDF na barra lateral
+with st.sidebar:
+    st.divider()
+    st.markdown("### 📄 Relatório de Desempenho")
+    st.caption("Exporte o relatório consolidado de disciplinas e tarefas em PDF.")
+    try:
+        user_info = st.session_state.get("user_info") or {}
+        st_name = user_info.get("name", "Estudante EduTrack")
+        st_email = user_info.get("email", "estudante@edutrack.ai")
+        sb_pdf_bytes = generate_student_performance_pdf_bytes(
+            student_name=st_name,
+            student_email=st_email,
+            subjects=subjects_list,
+            tasks=tasks_list
+        )
+        st.download_button(
+            label="📥 Baixar Relatório (PDF)",
+            data=sb_pdf_bytes,
+            file_name=f"relatorio_desempenho_{datetime.now().strftime('%Y%m%d_%H%M')}.pdf",
+            mime="application/pdf",
+            key="btn_sidebar_download_pdf",
+            use_container_width=True
+        )
+    except Exception as exc:
+        st.caption(f"PDF indisponível: {exc}")
+
 # ==============================================================================
 # Interface em Abas: Lista de Tarefas e Criação
 # ==============================================================================
@@ -66,6 +109,37 @@ tab_lista, tab_novo = st.tabs(["📋 Lista de Tarefas", "➕ Criar Nova Tarefa"]
 # Aba 1: Listagem das Tarefas Acadêmicas e Cálculo de Progresso
 # ------------------------------------------------------------------------------
 with tab_lista:
+    # ----------------------------------------------------------------------
+    # Relatório de Desempenho Acadêmico em PDF
+    # ----------------------------------------------------------------------
+    user_info = st.session_state.get("user_info") or {}
+    student_name = user_info.get("name", "Estudante EduTrack")
+    student_email = user_info.get("email", "estudante@edutrack.ai")
+
+    with st.container(border=True):
+        r_col1, r_col2 = st.columns([3, 1.4])
+        with r_col1:
+            st.markdown("#### 📄 Relatório de Desempenho Acadêmico (PDF)")
+            st.caption("Gere e faça o download do comprovante formal com suas disciplinas, tarefas e taxa de conclusão.")
+        with r_col2:
+            try:
+                main_pdf_bytes = generate_student_performance_pdf_bytes(
+                    student_name=student_name,
+                    student_email=student_email,
+                    subjects=subjects_list,
+                    tasks=tasks_list
+                )
+                st.download_button(
+                    label="📥 Baixar Relatório (PDF)",
+                    data=main_pdf_bytes,
+                    file_name=f"relatorio_desempenho_{datetime.now().strftime('%Y%m%d_%H%M')}.pdf",
+                    mime="application/pdf",
+                    key="btn_tab_download_pdf",
+                    use_container_width=True
+                )
+            except Exception as exc:
+                st.warning(f"Erro ao preparar relatório: {exc}")
+
     st.subheader("Tarefas Registradas")
 
     if not tasks_list:

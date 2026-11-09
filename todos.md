@@ -33,8 +33,9 @@
 - [x] Implementação de `pages/2_📝_Tarefas.py` conectando leitura (`GET /academic_tasks`), seleção de disciplina vinculada (`GET /subjects`) e criação (`POST /academic_tasks`) com `subject_id`, loading e tratamento de erro/401.
 - [x] Arquivamento no OpenSpec (`openspec/specs/sync-subjects-academic-tasks/spec.md` promovido e mudança arquivada em `openspec/changes/archive/2026-10-30-sync-subjects-academic-tasks`).
 
-
-
-
-
+## Especificações Arquivadas (`geracao-relatorio-pdf`)
+- [x] Script Python `scripts/generate_report_pdf.py` para gerar relatório de desempenho do aluno em formato PDF com suporte CLI e modo autônomo.
+- [x] Descritor de grupo `api/reports/reports.xs` e endpoint autenticado `GET /reports/performance` em `api/reports/reports_performance_GET.xs` no Xano para baixar o relatório.
+- [x] Integração do download de PDF no frontend Streamlit (`pages/2_📝_Tarefas.py` e `app.py`).
+- [x] Arquivamento no OpenSpec (`openspec/specs/geracao-relatorio-pdf/spec.md` promovido e mudança arquivada em `openspec/changes/archive/2026-11-09-geracao-relatorio-pdf`).
 

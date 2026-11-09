@@ -240,6 +240,38 @@ with st.sidebar:
         else:
             st.success("🟢 Modo Local Ativo (Memória Dinâmica)")
 
+    st.divider()
+    st.subheader("📄 Relatório PDF")
+    st.caption("Exporte o desempenho acadêmico em formato PDF.")
+    try:
+        from scripts.generate_report_pdf import generate_student_performance_pdf_bytes
+        formatted_tasks = [
+            {
+                "id": t.get("id"),
+                "subject_id": 1,
+                "title": t.get("title"),
+                "due_date": t.get("due_date"),
+                "status": "completed" if t.get("completed") else "pending"
+            }
+            for t in st.session_state.tasks
+        ]
+        app_pdf_bytes = generate_student_performance_pdf_bytes(
+            student_name="Estudante EduTrack",
+            student_email="aluno@edutrack.ai",
+            subjects=st.session_state.subjects,
+            tasks=formatted_tasks
+        )
+        st.download_button(
+            label="📥 Baixar Relatório (PDF)",
+            data=app_pdf_bytes,
+            file_name=f"relatorio_desempenho_{datetime.now().strftime('%Y%m%d_%H%M')}.pdf",
+            mime="application/pdf",
+            key="btn_sidebar_app_pdf",
+            use_container_width=True
+        )
+    except Exception as exc:
+        st.caption(f"PDF indisponível: {exc}")
+
 # ==========================================
 # Página 1: Dashboard
 # ==========================================
