@@ -4,40 +4,27 @@ import requests
 from datetime import datetime
 
 # ==============================================================================
-# Carregamento de Variáveis de Ambiente (.env)
+# Configuração de Autenticação via Streamlit Secrets
 # ==============================================================================
-def load_env_variables():
-    """Carrega as variáveis do arquivo .env na raiz do projeto."""
-    root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
-    env_file = os.path.join(root_dir, ".env")
-    
-    # Tentativa com python-dotenv se disponível
+DEFAULT_XANO_AUTH_URL = "https://x8ki-letl-twmt.n7.xano.io/api:72mncMCo"
+
+def get_auth_base_url() -> str:
+    """
+    Obtém a URL base de autenticação a partir do st.secrets do Streamlit (.streamlit/secrets.toml).
+    Mantém fallback resiliente para variáveis de ambiente (os.environ) ou o valor padrão canônico.
+    """
     try:
-        from dotenv import load_dotenv
-        load_dotenv(env_file)
-        return
-    except ImportError:
+        if hasattr(st, "secrets") and "XANO_AUTH_BASE_URL" in st.secrets:
+            val = str(st.secrets["XANO_AUTH_BASE_URL"]).strip()
+            if val:
+                return val.rstrip("/")
+    except Exception:
         pass
 
-    # Fallback nativo para leitura de .env caso python-dotenv não esteja instalado
-    if os.path.exists(env_file):
-        with open(env_file, "r", encoding="utf-8") as f:
-            for line in f:
-                line = line.strip()
-                if not line or line.startswith("#"):
-                    continue
-                if "=" in line:
-                    key, val = line.split("=", 1)
-                    key = key.strip()
-                    val = val.strip().strip("\"'")
-                    if key not in os.environ:
-                        os.environ[key] = val
+    return os.getenv("XANO_AUTH_BASE_URL", DEFAULT_XANO_AUTH_URL).rstrip("/")
 
-load_env_variables()
+AUTH_BASE_URL = get_auth_base_url()
 
-# URL Base padrão definida no .env ou fallback canônico do grupo Authentication
-DEFAULT_XANO_AUTH_URL = "https://x8ki-letl-twmt.n7.xano.io/api:72mncMCo"
-AUTH_BASE_URL = os.getenv("XANO_AUTH_BASE_URL", DEFAULT_XANO_AUTH_URL).rstrip("/")
 
 # ==============================================================================
 # Configuração da Página
@@ -63,7 +50,7 @@ def signup_user(name: str, email: str, password: str):
     Cadastra um novo usuário no backend Xano via POST /auth/signup.
     Persiste os dados na tabela 'user' e retorna o token de autenticação.
     """
-    url = f"{AUTH_BASE_URL}/auth/signup"
+    url = f"{get_auth_base_url()}/auth/signup"
     payload = {
         "name": name.strip(),
         "email": email.strip().lower(),
@@ -90,7 +77,7 @@ def login_user(email: str, password: str):
     Realiza o login do usuário via POST /auth/login.
     Retorna o authToken e o user_id.
     """
-    url = f"{AUTH_BASE_URL}/auth/login"
+    url = f"{get_auth_base_url()}/auth/login"
     payload = {
         "email": email.strip().lower(),
         "password": password
@@ -115,7 +102,7 @@ def get_user_profile(token: str):
     Recupera os dados cadastrais do usuário autenticado via GET /auth/me.
     Requer o cabeçalho Authorization: Bearer <token>.
     """
-    url = f"{AUTH_BASE_URL}/auth/me"
+    url = f"{get_auth_base_url()}/auth/me"
     headers = {
         "Authorization": f"Bearer {token}"
     }
@@ -142,8 +129,9 @@ st.caption("Acesso seguro ao EduTrack AI com autenticação integrada ao Xano.")
 # Sidebar com informações do endpoint
 with st.sidebar:
     st.markdown("### ⚙️ Configurações de Auth")
-    st.caption("URL Base definida no arquivo `.env`:")
-    st.code(AUTH_BASE_URL, language="text")
+    st.caption("URL Base configurada no `st.secrets` (`.streamlit/secrets.toml`):")
+    st.code(get_auth_base_url(), language="text")
+
 
 # ------------------------------------------------------------------------------
 # Caso 1: Usuário Autenticado (Exibição do Perfil e Opção de Logout)
@@ -199,7 +187,7 @@ if st.session_state.auth_token:
 
     st.divider()
     with st.expander("🔍 Detalhes Técnicos da Sessão"):
-        st.markdown(f"**Endpoint Conectado:** `{AUTH_BASE_URL}/auth/me`")
+        st.markdown(f"**Endpoint Conectado:** `{get_auth_base_url()}/auth/me`")
         st.markdown(f"**Token JWT (Bearer):** `{st.session_state.auth_token[:25]}...`")
 
 # ------------------------------------------------------------------------------
