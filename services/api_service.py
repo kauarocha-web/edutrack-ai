@@ -15,10 +15,14 @@ from datetime import datetime
 from typing import Tuple, Any, Optional
 
 # ==============================================================================
-# Carregamento de Variáveis de Ambiente (.env)
+# Configuração de URLs do Xano (Streamlit Secrets com fallback resiliente)
 # ==============================================================================
-def _load_env_variables():
-    """Carrega as variáveis do arquivo .env localizado na raiz do projeto."""
+# URLs Base padrão dos grupos de API do Xano
+DEFAULT_SUBJECTS_URL = "https://x8ki-letl-twmt.n7.xano.io/api:4cvOQ4Zo"
+DEFAULT_TASKS_URL = "https://x8ki-letl-twmt.n7.xano.io/api:CwqMGDvq"
+
+def _load_env_fallback():
+    """Carrega variáveis de .env como fallback secundário caso exista."""
     root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
     env_file = os.path.join(root_dir, ".env")
     
@@ -42,14 +46,37 @@ def _load_env_variables():
                     if key not in os.environ:
                         os.environ[key] = val
 
-_load_env_variables()
+_load_env_fallback()
 
-# URLs Base dos grupos de API do Xano
-DEFAULT_SUBJECTS_URL = "https://x8ki-letl-twmt.n7.xano.io/api:4cvOQ4Zo"
-DEFAULT_TASKS_URL = "https://x8ki-letl-twmt.n7.xano.io/api:CwqMGDvq"
+def get_config_value(key: str, default: str = "") -> str:
+    """
+    Obtém uma configuração prioritariamente do st.secrets do Streamlit (.streamlit/secrets.toml).
+    Caso não esteja disponível ou a execução ocorra fora do Streamlit (scripts/CLI),
+    utiliza fallback para variáveis de ambiente (os.environ) ou o valor padrão informado.
+    """
+    try:
+        import streamlit as st
+        if hasattr(st, "secrets") and key in st.secrets:
+            val = str(st.secrets[key]).strip()
+            if val:
+                return val
+    except Exception:
+        pass
 
-SUBJECTS_BASE_URL = os.getenv("XANO_SUBJECTS_BASE_URL", DEFAULT_SUBJECTS_URL).rstrip("/")
-TASKS_BASE_URL = os.getenv("XANO_TASKS_BASE_URL", DEFAULT_TASKS_URL).rstrip("/")
+    return os.getenv(key, default).strip()
+
+def get_subjects_base_url() -> str:
+    """Retorna a URL base de Subjects obtida do st.secrets."""
+    return get_config_value("XANO_SUBJECTS_BASE_URL", DEFAULT_SUBJECTS_URL).rstrip("/")
+
+def get_tasks_base_url() -> str:
+    """Retorna a URL base de Academic Tasks obtida do st.secrets."""
+    return get_config_value("XANO_TASKS_BASE_URL", DEFAULT_TASKS_URL).rstrip("/")
+
+# Mantém variáveis a nível de módulo para compatibilidade retroativa
+SUBJECTS_BASE_URL = get_subjects_base_url()
+TASKS_BASE_URL = get_tasks_base_url()
+
 
 # ==============================================================================
 # Função Genérica para Requisições Autenticadas
@@ -113,7 +140,7 @@ def get_subjects(token: Optional[str]) -> Tuple[bool, Any, int]:
     """
     Consulta todas as disciplinas pertencentes ao usuário autenticado (GET /subjects).
     """
-    url = f"{SUBJECTS_BASE_URL}/subjects"
+    url = f"{get_subjects_base_url()}/subjects"
     return make_authenticated_request("GET", url, token)
 
 def create_subject(
@@ -125,7 +152,7 @@ def create_subject(
     """
     Cria uma nova disciplina vinculada ao usuário autenticado (POST /subjects).
     """
-    url = f"{SUBJECTS_BASE_URL}/subjects"
+    url = f"{get_subjects_base_url()}/subjects"
     payload = {
         "name": name.strip(),
         "teacher": teacher.strip(),
@@ -140,7 +167,7 @@ def get_academic_tasks(token: Optional[str]) -> Tuple[bool, Any, int]:
     """
     Consulta todas as tarefas acadêmicas pertencentes ao usuário autenticado (GET /academic_tasks).
     """
-    url = f"{TASKS_BASE_URL}/academic_tasks"
+    url = f"{get_tasks_base_url()}/academic_tasks"
     return make_authenticated_request("GET", url, token)
 
 def create_academic_task(
@@ -155,7 +182,7 @@ def create_academic_task(
     Cria uma nova tarefa acadêmica vinculada ao usuário e à disciplina selecionada (POST /academic_tasks).
     Garante valores válidos e não vazios para todos os parâmetros exigidos pelo Xano.
     """
-    url = f"{TASKS_BASE_URL}/academic_tasks"
+    url = f"{get_tasks_base_url()}/academic_tasks"
 
     clean_title = title.strip()
     clean_desc = description.strip() if description and description.strip() else "Sem descrição"
@@ -186,7 +213,8 @@ def update_academic_task_status(
     Atualiza o status de uma tarefa acadêmica existente (PATCH /academic_tasks/{id}).
     Envia todos os campos da tarefa para satisfazer os requisitos do backend Xano.
     """
-    url = f"{TASKS_BASE_URL}/academic_tasks/{task_id}"
+    url = f"{get_tasks_base_url()}/academic_tasks/{task_id}"
+
 
     if task_data:
         title = title or task_data.get("title")

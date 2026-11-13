@@ -39,3 +39,8 @@
 - [x] Integração do download de PDF no frontend Streamlit (`pages/2_📝_Tarefas.py` e `app.py`).
 - [x] Arquivamento no OpenSpec (`openspec/specs/geracao-relatorio-pdf/spec.md` promovido e mudança arquivada em `openspec/changes/archive/2026-11-09-geracao-relatorio-pdf`).
 
+## Especificações Arquivadas (`migracao-env-para-secrets`)
+- [x] Configuração e validação de sintaxe em `.streamlit/secrets.toml`.
+- [x] Migração da leitura de URLs em `services/api_service.py` para `st.secrets` com fallback seguro para scripts CLI.
+- [x] Migração da leitura de URLs em `pages/3_👤_Perfil.py` para `st.secrets`.
+- [x] Arquivamento no OpenSpec (`openspec/specs/migracao-env-para-secrets/spec.md` promovido e mudança arquivada em `openspec/changes/archive/2026-11-13-migracao-env-para-secrets`).
